@@ -22,6 +22,7 @@ export async function createEventAction(formData: FormData) {
       allDay: formData.get("allDay") === "on",
       color: String(formData.get("color") ?? "#2563eb"),
       responsibleUserId: formData.get("responsibleUserId") as string | null,
+      reminders: [],
     },
   });
 
