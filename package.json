@@ -12,8 +12,8 @@
     "test:e2e": "playwright test",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:seed": "tsx prisma/seed.ts",
-    "worker:reminders": "tsx src/worker/reminders.ts"
+    "db:seed": "tsx --env-file=.env prisma/seed.ts",
+    "worker:reminders": "tsx --env-file=.env src/worker/reminders.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",

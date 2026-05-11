@@ -17,8 +17,8 @@ export async function createEventAction(formData: FormData) {
     input: {
       title: String(formData.get("title") ?? ""),
       description: String(formData.get("description") ?? ""),
-      startsAt: String(formData.get("startsAt") ?? ""),
-      endsAt: String(formData.get("endsAt") ?? ""),
+      startsAt: new Date(String(formData.get("startsAt") ?? "")).toISOString(),
+      endsAt: new Date(String(formData.get("endsAt") ?? "")).toISOString(),
       allDay: formData.get("allDay") === "on",
       color: String(formData.get("color") ?? "#2563eb"),
       responsibleUserId: formData.get("responsibleUserId") as string | null,
