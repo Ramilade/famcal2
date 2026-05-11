@@ -1,49 +1,113 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --primary: #2563eb;
+  --border: #e2e8f0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+* { box-sizing: border-box; }
 
 body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-a {
-  color: inherit;
+input, textarea, button {
+  font: inherit;
+}
+
+.app-shell, .auth-shell {
+  width: min(100%, 960px);
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.auth-shell {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+}
+
+.card, .event-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 18px 50px rgb(15 23 42 / 0.08);
+}
+
+.form-stack {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+}
+
+.form-stack label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+}
+
+.form-stack input, .form-stack textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  color: var(--text);
+}
+
+button, .button {
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary);
+  color: white;
+  padding: 12px 16px;
   text-decoration: none;
+  font-weight: 700;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+.calendar-shell {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+}
+
+.calendar-header h1 { margin: 0; }
+
+.event-list {
+  display: grid;
+  gap: 12px;
+}
+
+.event-card {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border-left-width: 8px;
+}
+
+.event-card span { color: var(--muted); }
+
+@media (min-width: 768px) {
+  .app-shell { padding: 48px 32px; }
+  .event-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
