@@ -32,6 +32,7 @@ describe("createEvent", () => {
         allDay: false,
         color: "#16a34a",
         responsibleUserId: "u2",
+        reminderRules: { create: [] },
       },
     });
   });

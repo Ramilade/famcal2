@@ -25,6 +25,12 @@ export async function createEvent(
       allDay: input.allDay,
       color: input.color,
       responsibleUserId: input.responsibleUserId ?? null,
+      reminderRules: {
+        create: input.reminders.map((reminder) => ({
+          minutesBeforeStart: reminder.minutesBeforeStart,
+          channel: reminder.channel,
+        })),
+      },
     },
   });
 }
