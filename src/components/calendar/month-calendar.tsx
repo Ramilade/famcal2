@@ -20,8 +20,6 @@ const MONTH_NAMES = [
 function buildGrid(year: number, month: number) {
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
-
-  // Mon=0 … Sun=6
   const startDow = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
 
   const days: { date: Date; currentMonth: boolean }[] = [];
@@ -45,12 +43,7 @@ function toDateKey(date: Date) {
 }
 
 function initials(name: string) {
-  return name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+  return name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 }
 
 function hexToRgb(hex: string) {
@@ -60,24 +53,28 @@ function hexToRgb(hex: string) {
   return `${r} ${g} ${b}`;
 }
 
-export function MonthCalendar({
-  year,
-  month,
-  events,
-}: {
+function formatTime(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleTimeString("da-DK", { hour: "2-digit", minute: "2-digit" });
+}
+
+export function MonthCalendar({ year, month, events }: {
   year: number;
   month: number;
   events: CalendarEvent[];
 }) {
   const router = useRouter();
 
-  const prevMonth = month === 0 ? `${year - 1}-12` : `${year}-${String(month).padStart(2, "0")}`;
-  const nextMonth = month === 11 ? `${year + 1}-01` : `${year}-${String(month + 2).padStart(2, "0")}`;
+  const prevMonth = month === 0
+    ? `${year - 1}-12`
+    : `${year}-${String(month).padStart(2, "0")}`;
+  const nextMonth = month === 11
+    ? `${year + 1}-01`
+    : `${year}-${String(month + 2).padStart(2, "0")}`;
 
   const grid = buildGrid(year, month);
   const todayKey = toDateKey(new Date());
 
-  // Index events by date key
   const byDay: Record<string, CalendarEvent[]> = {};
   for (const event of events) {
     const key = toDateKey(new Date(event.startsAt));
@@ -87,41 +84,47 @@ export function MonthCalendar({
   return (
     <section className="month-calendar">
       <header className="cal-nav">
-        <button className="cal-nav-btn" onClick={() => router.push(`/?month=${prevMonth}`)}>‹</button>
+        <button className="cal-nav-btn" onClick={() => router.push(`/?month=${prevMonth}`)} aria-label="Forrige måned">‹</button>
         <h2 className="cal-title">{MONTH_NAMES[month]} {year}</h2>
-        <button className="cal-nav-btn" onClick={() => router.push(`/?month=${nextMonth}`)}>›</button>
+        <button className="cal-nav-btn" onClick={() => router.push(`/?month=${nextMonth}`)} aria-label="Næste måned">›</button>
       </header>
 
       <div className="cal-grid">
-        {WEEKDAYS.map((d) => (
-          <div key={d} className="cal-weekday">{d}</div>
+        {WEEKDAYS.map((d, i) => (
+          <div key={d} className={`cal-weekday${i >= 5 ? " cal-weekday--weekend" : ""}`}>{d}</div>
         ))}
 
         {grid.map(({ date, currentMonth }, i) => {
           const key = toDateKey(date);
           const dayEvents = byDay[key] ?? [];
           const isToday = key === todayKey;
+          const dow = (i) % 7; // 0=Mon…6=Sun
+          const isWeekend = dow >= 5;
 
           return (
-            <div key={i} className={`cal-day${currentMonth ? "" : " cal-day--other"}${isToday ? " cal-day--today" : ""}`}>
+            <div
+              key={i}
+              className={[
+                "cal-day",
+                !currentMonth && "cal-day--other",
+                isToday && "cal-day--today",
+                isWeekend && "cal-day--weekend",
+              ].filter(Boolean).join(" ")}
+            >
               <span className="cal-day-num">{date.getDate()}</span>
               <div className="cal-day-events">
                 {dayEvents.slice(0, 3).map((event) => (
                   <div
                     key={event.id}
                     className="cal-chip"
-                    style={{
-                      background: `rgb(${hexToRgb(event.color)} / 0.15)`,
-                      borderLeft: `3px solid ${event.color}`,
-                    }}
-                    title={`${event.title}${event.responsibleName ? ` — ${event.responsibleName}` : ""}`}
+                    style={{ "--chip-rgb": hexToRgb(event.color), "--chip-color": event.color } as React.CSSProperties}
+                    title={`${formatTime(event.startsAt)} ${event.title}${event.responsibleName ? ` — ${event.responsibleName}` : ""}`}
                   >
+                    <span className="cal-chip-dot" />
+                    <span className="cal-chip-time">{formatTime(event.startsAt)}</span>
                     <span className="cal-chip-title">{event.title}</span>
                     {event.responsibleName && (
-                      <span
-                        className="cal-chip-avatar"
-                        style={{ background: event.color }}
-                      >
+                      <span className="cal-chip-avatar" style={{ background: event.color }}>
                         {initials(event.responsibleName)}
                       </span>
                     )}

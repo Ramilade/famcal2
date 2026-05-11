@@ -8,9 +8,9 @@ export default function LoginPage() {
 
   return (
     <main className="auth-shell">
-      <form action={action} className="card form-stack">
-        <h1>Log ind</h1>
-        {state?.error ? <p style={{ color: "red" }}>{state.error}</p> : null}
+      <form action={action}>
+        <h1>FamCal</h1>
+        {state?.error ? <p className="auth-error">{state.error}</p> : null}
         <label>
           Email
           <input name="email" type="email" required autoComplete="email" />
@@ -19,7 +19,9 @@ export default function LoginPage() {
           Adgangskode
           <input name="password" type="password" required autoComplete="current-password" />
         </label>
-        <button type="submit" disabled={pending}>Log ind</button>
+        <button type="submit" disabled={pending}>
+          {pending ? "Logger ind…" : "Log ind"}
+        </button>
       </form>
     </main>
   );
