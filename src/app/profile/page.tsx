@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireUserId } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { ProfileForm } from "./profile-form";
+import { PushToggle } from "@/components/push/push-toggle";
 
 function initials(name: string) {
   return name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
@@ -49,6 +50,15 @@ export default async function ProfilePage() {
       </div>
 
       <ProfileForm name={user.name} email={user.email} />
+
+      <div className="profile-section" style={{ marginTop: 20 }}>
+        <h2 className="profile-section-title">Notifikationer</h2>
+        <p style={{ margin: "0 0 16px", color: "var(--text-2)", fontSize: "0.9rem" }}>
+          Slå push-notifikationer til for at få besked om nye og opdaterede aftaler.
+          På iPhone skal appen først tilføjes til hjemmeskærmen.
+        </p>
+        <PushToggle showLabel />
+      </div>
     </main>
   );
 }

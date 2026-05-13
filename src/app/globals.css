@@ -2572,4 +2572,22 @@ input, textarea, button, select { font: inherit; }
   .dashboard-greeting-title { font-size: 1.5rem; }
   .pending-card { padding: 14px; }
   .app-topbar { margin-bottom: 20px; }
+
+  /* Week view: horizontally scrollable with readable column widths */
+  .week-calendar {
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-sm);
+  }
+  .week-grid {
+    grid-template-columns: 40px repeat(7, minmax(72px, 1fr));
+    min-width: calc(40px + 7 * 72px);
+  }
+  .week-body {
+    grid-template-columns: 40px repeat(7, minmax(72px, 1fr));
+  }
+  .week-time-col { min-width: 40px; }
+  .week-event-time { font-size: 0.6rem; }
+  .week-event-title { font-size: 0.7rem; }
 }

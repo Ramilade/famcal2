@@ -9,7 +9,7 @@ function urlBase64ToUint8Array(base64: string): ArrayBuffer {
   return new Uint8Array([...raw].map((c) => c.charCodeAt(0))).buffer as ArrayBuffer;
 }
 
-export function PushToggle() {
+export function PushToggle({ showLabel }: { showLabel?: boolean } = {}) {
   const [subscribed, setSubscribed] = useState(false);
   const [supported, setSupported] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,17 @@ export function PushToggle() {
     );
   }, []);
 
-  if (!supported) return null;
+  if (!supported) {
+    if (showLabel) {
+      return (
+        <p style={{ color: "var(--text-2)", fontSize: "0.85rem", margin: 0 }}>
+          Push-notifikationer understøttes ikke i denne browser.
+          På iPhone: tilføj FamCal til hjemmeskærmen via Del-knappen og åbn derfra.
+        </p>
+      );
+    }
+    return null;
+  }
 
   async function toggle() {
     setLoading(true);
@@ -54,6 +64,22 @@ export function PushToggle() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (showLabel) {
+    return (
+      <button
+        className={`push-toggle-btn${subscribed ? " push-toggle-btn--active" : ""}`}
+        onClick={toggle}
+        disabled={loading}
+        style={{ width: "auto", padding: "0 18px", gap: 8, display: "flex", alignItems: "center", height: 42 }}
+      >
+        <span>{subscribed ? "🔔" : "🔕"}</span>
+        <span style={{ fontSize: "0.9rem", fontWeight: 600 }}>
+          {loading ? "Vent…" : subscribed ? "Notifikationer er slået til" : "Slå notifikationer til"}
+        </span>
+      </button>
+    );
   }
 
   return (
