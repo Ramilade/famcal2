@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { updateFamilyBackgroundAction } from "./actions";
 
 const PRESETS = [
@@ -29,7 +29,10 @@ export function BackgroundPicker({
   const current = currentBackground ?? "";
   const [selected, setSelected] = useState(current);
   const [customUrl, setCustomUrl] = useState(isPreset(current) ? "" : current);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const [, startTransition] = useTransition();
+  const fileRef = useRef<HTMLInputElement>(null);
 
   function apply(value: string) {
     setSelected(value);
@@ -44,6 +47,34 @@ export function BackgroundPicker({
   function handleCustomSubmit(e: React.FormEvent) {
     e.preventDefault();
     apply(customUrl.trim());
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadError("");
+    setUploading(true);
+
+    try {
+      const fd = new FormData();
+      fd.set("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setUploadError(data.error ?? "Upload fejlede");
+        return;
+      }
+
+      setCustomUrl(data.url);
+      apply(data.url);
+    } catch {
+      setUploadError("Upload fejlede — prøv igen");
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
   }
 
   return (
@@ -62,6 +93,29 @@ export function BackgroundPicker({
           </button>
         ))}
       </div>
+
+      <div className="bg-upload-row">
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/heic"
+          style={{ display: "none" }}
+          onChange={handleFileChange}
+        />
+        <button
+          type="button"
+          className="btn-upload-photo"
+          disabled={uploading}
+          onClick={() => fileRef.current?.click()}
+        >
+          {uploading ? "Uploader…" : "📷 Upload billede"}
+        </button>
+        {uploadError && <span className="bg-upload-error">{uploadError}</span>}
+        {selected && !isPreset(selected) && selected.startsWith("/api/uploads/") && (
+          <span className="bg-upload-success">✓ Eget billede aktiv</span>
+        )}
+      </div>
+
       <form className="bg-custom-form" onSubmit={handleCustomSubmit}>
         <input
           type="url"

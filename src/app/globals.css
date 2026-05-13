@@ -2402,6 +2402,32 @@ input, textarea, button, select { font: inherit; }
   .cal-chip-dot { display: block; }
 }
 
+/* ── Background upload ───────────────────────────────────── */
+.bg-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 4px;
+  flex-wrap: wrap;
+}
+
+.btn-upload-photo {
+  border: 1.5px dashed var(--primary);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--primary);
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.btn-upload-photo:hover { background: rgb(79 127 234 / 0.08); }
+.btn-upload-photo:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.bg-upload-error { font-size: 0.8rem; color: #dc2626; }
+.bg-upload-success { font-size: 0.8rem; color: #16a34a; font-weight: 600; }
+
 /* ── Bottom nav ──────────────────────────────────────────── */
 .bottom-nav {
   display: none;
