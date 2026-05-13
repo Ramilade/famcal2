@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { BottomNav } from "@/components/nav/bottom-nav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="da">
       <body>
         {children}
+        <BottomNav />
         <Script
           id="sw-register"
           strategy="afterInteractive"

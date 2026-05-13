@@ -22,11 +22,13 @@ export default async function ProfilePage() {
       <div className="app-topbar">
         <Link href="/dashboard" className="app-logo">FamCal</Link>
         <div className="app-topbar-actions">
-          <Link href="/dashboard" className="btn-ghost">← Forside</Link>
-          <Link href="/" className="btn-ghost">Kalender</Link>
-          <form action="/logout" method="post">
-            <button type="submit" className="btn-ghost">Log ud</button>
-          </form>
+          <div className="topbar-nav">
+            <Link href="/dashboard" className="btn-ghost">← Forside</Link>
+            <Link href="/calendar" className="btn-ghost">Kalender</Link>
+            <form action="/logout" method="post">
+              <button type="submit" className="btn-ghost">Log ud</button>
+            </form>
+          </div>
         </div>
       </div>
 

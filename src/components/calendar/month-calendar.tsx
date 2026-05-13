@@ -102,7 +102,7 @@ export function MonthCalendar({
       <header className="cal-nav">
         <button
           className="cal-nav-btn"
-          onClick={() => router.push(`/?month=${prevMonth}`)}
+          onClick={() => router.push(`/calendar?month=${prevMonth}`)}
           aria-label="Forrige måned"
         >
           ‹
@@ -112,7 +112,7 @@ export function MonthCalendar({
         </h2>
         <button
           className="cal-nav-btn"
-          onClick={() => router.push(`/?month=${nextMonth}`)}
+          onClick={() => router.push(`/calendar?month=${nextMonth}`)}
           aria-label="Næste måned"
         >
           ›

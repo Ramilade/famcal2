@@ -111,12 +111,14 @@ export default async function DashboardPage() {
       <div className="app-topbar">
         <span className="app-logo">FamCal</span>
         <div className="app-topbar-actions">
-          <Link href="/" className="btn-ghost">📅 Kalender</Link>
-          <Link href="/family" className="btn-ghost">Familie</Link>
-          <Link href="/profile" className="btn-ghost">Profil</Link>
-          <form action="/logout" method="post">
-            <button type="submit" className="btn-ghost">Log ud</button>
-          </form>
+          <div className="topbar-nav">
+            <Link href="/calendar" className="btn-ghost">📅 Kalender</Link>
+            <Link href="/family" className="btn-ghost">Familie</Link>
+            <Link href="/profile" className="btn-ghost">Profil</Link>
+            <form action="/logout" method="post">
+              <button type="submit" className="btn-ghost">Log ud</button>
+            </form>
+          </div>
         </div>
       </div>
 
@@ -168,7 +170,7 @@ export default async function DashboardPage() {
       <section className="dashboard-section">
         <div className="dashboard-section-header">
           <h2 className="dashboard-section-title">Kommende aftaler</h2>
-          <Link href="/" className="dashboard-see-all">Se kalender →</Link>
+          <Link href="/calendar" className="dashboard-see-all">Se kalender →</Link>
         </div>
 
         {sortedDays.length === 0 ? (
@@ -189,7 +191,7 @@ export default async function DashboardPage() {
                   return (
                     <Link
                       key={`${event.id}-${event.startsAt}`}
-                      href={`/?month=${dayKey.slice(0, 7)}`}
+                      href={`/calendar?month=${dayKey.slice(0, 7)}`}
                       className="dashboard-event-row"
                       style={{ "--chip-color": chipColor } as React.CSSProperties}
                     >

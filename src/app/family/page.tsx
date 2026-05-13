@@ -53,18 +53,18 @@ export default async function FamilyPage() {
   return (
     <main className="app-shell">
       <div className="app-topbar">
-        <Link href="/" className="app-logo">
+        <Link href="/dashboard" className="app-logo">
           FamCal
         </Link>
         <div className="app-topbar-actions">
-          <Link href="/dashboard" className="btn-ghost">← Forside</Link>
-          <Link href="/" className="btn-ghost">Kalender</Link>
-          <Link href="/profile" className="btn-ghost">Profil</Link>
-          <form action="/logout" method="post">
-            <button type="submit" className="btn-ghost">
-              Log ud
-            </button>
-          </form>
+          <div className="topbar-nav">
+            <Link href="/dashboard" className="btn-ghost">← Forside</Link>
+            <Link href="/calendar" className="btn-ghost">Kalender</Link>
+            <Link href="/profile" className="btn-ghost">Profil</Link>
+            <form action="/logout" method="post">
+              <button type="submit" className="btn-ghost">Log ud</button>
+            </form>
+          </div>
         </div>
       </div>
 

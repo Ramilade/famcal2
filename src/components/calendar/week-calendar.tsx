@@ -116,7 +116,7 @@ export function WeekCalendar({
       <header className="cal-nav">
         <button
           className="cal-nav-btn"
-          onClick={() => router.push(`/?view=week&week=${prevWeek}`)}
+          onClick={() => router.push(`/calendar?view=week&week=${prevWeek}`)}
           aria-label="Forrige uge"
         >
           ‹
@@ -124,7 +124,7 @@ export function WeekCalendar({
         <h2 className="cal-title">{weekLabel}</h2>
         <button
           className="cal-nav-btn"
-          onClick={() => router.push(`/?view=week&week=${nextWeek}`)}
+          onClick={() => router.push(`/calendar?view=week&week=${nextWeek}`)}
           aria-label="Næste uge"
         >
           ›
