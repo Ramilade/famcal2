@@ -65,6 +65,7 @@ export default async function DashboardPage() {
         reminderRules: true,
         overrides: true,
         confirmWithUser: true,
+        participants: { include: { user: { select: { name: true } } } },
       },
       orderBy: { startsAt: "asc" },
     }),
