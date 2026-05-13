@@ -37,7 +37,8 @@ model User {
   pushSubscriptions PushSubscription[]
   dailyDigests      DailyDigestDelivery[]
   activityLogs      ActivityLog[]
-  confirmWithEvents Event[]               @relation("ConfirmWithEvents")
+  confirmWithEvents   Event[]               @relation("ConfirmWithEvents")
+  participatingEvents EventParticipant[]
 }
 
 model DailyDigestDelivery {
@@ -129,8 +130,19 @@ model Event {
   deliveries        NotificationDelivery[]
   overrides         EventOverride[]
   checklistItems    ChecklistItem[]
+  participants      EventParticipant[]
 
   @@index([familyId, startsAt])
+}
+
+model EventParticipant {
+  id      String @id @default(cuid())
+  eventId String
+  userId  String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
 }
 
 model ChecklistItem {

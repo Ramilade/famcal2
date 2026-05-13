@@ -17,6 +17,7 @@ export async function createEvent(
     input: EventInput;
     needsConfirmation?: boolean;
     confirmWithUserId?: string | null;
+    participantIds?: string[];
   },
 ) {
   const input = eventInputSchema.parse(args.input);
@@ -34,6 +35,9 @@ export async function createEvent(
       responsibleUserId: input.responsibleUserId ?? null,
       needsConfirmation: args.needsConfirmation ?? false,
       confirmWithUserId: args.confirmWithUserId ?? null,
+      ...(args.participantIds && args.participantIds.length > 0
+        ? { participants: { create: args.participantIds.map((userId) => ({ userId })) } }
+        : {}),
       reminderRules: {
         create: input.reminders.map((reminder) => ({
           minutesBeforeStart: reminder.minutesBeforeStart,

@@ -2402,6 +2402,67 @@ input, textarea, button, select { font: inherit; }
   .cal-chip-dot { display: block; }
 }
 
+/* ── Participant picker ──────────────────────────────────── */
+.participant-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.participant-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  padding: 5px 12px 5px 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+.participant-btn:hover { border-color: var(--text-2); }
+.participant-btn--active { font-weight: 600; }
+
+.participant-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: background var(--transition);
+}
+
+.modal-participants-meta {
+  align-items: flex-start !important;
+  flex-wrap: wrap;
+  gap: 6px !important;
+}
+
+.modal-participant-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.modal-participant-tag {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
 /* ── Background upload ───────────────────────────────────── */
 .bg-upload-row {
   display: flex;

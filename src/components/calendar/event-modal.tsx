@@ -58,6 +58,9 @@ export function EventModal(props: Props) {
   const [allDay, setAllDay] = useState(isEdit ? event!.allDay : false);
   const [needsConfirmation, setNeedsConfirmation] = useState(isEdit ? event!.needsConfirmation : false);
   const [confirmWith, setConfirmWith] = useState(isEdit ? (event!.confirmWithUserId ?? "") : "");
+  const [participants, setParticipants] = useState<string[]>(
+    isEdit ? (event!.participants?.map((p) => p.userId) ?? []) : [],
+  );
   const [showCounterForm, setShowCounterForm] = useState(false);
   const [counterStart, setCounterStart] = useState(isEdit ? toDatetimeLocal(event!.startsAt) : "");
   const [counterEnd, setCounterEnd] = useState(isEdit ? toDatetimeLocal(event!.endsAt) : "");
@@ -214,6 +217,17 @@ export function EventModal(props: Props) {
                     >
                       {s === "this" ? "Kun denne" : s === "future" ? "Denne og fremtidige" : "Alle"}
                     </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {isEdit && event!.participants && event!.participants.length > 0 && (
+              <div className="modal-meta modal-participants-meta">
+                <span className="modal-meta-label">Deltagere</span>
+                <div className="modal-participant-tags">
+                  {event!.participants.map((p) => (
+                    <span key={p.userId} className="modal-participant-tag">{p.name.split(" ")[0]}</span>
                   ))}
                 </div>
               </div>
@@ -408,6 +422,41 @@ export function EventModal(props: Props) {
                   ))}
                 </select>
               </label>
+            )}
+
+            {members.length > 1 && !isBirthday && (
+              <div className="field">
+                <span className="field-label">Deltagere</span>
+                <div className="participant-picker">
+                  {members.map((m) => {
+                    const active = participants.includes(m.id);
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        className={`participant-btn${active ? " participant-btn--active" : ""}`}
+                        style={active ? { borderColor: m.color, background: `${m.color}18` } : {}}
+                        onClick={() =>
+                          setParticipants((prev) =>
+                            prev.includes(m.id) ? prev.filter((id) => id !== m.id) : [...prev, m.id],
+                          )
+                        }
+                      >
+                        <span
+                          className="participant-avatar"
+                          style={{ background: active ? m.color : undefined }}
+                        >
+                          {m.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)}
+                        </span>
+                        {m.name.split(" ")[0]}
+                      </button>
+                    );
+                  })}
+                </div>
+                {participants.map((uid) => (
+                  <input key={uid} type="hidden" name="participantId" value={uid} />
+                ))}
+              </div>
             )}
 
             <div className="field">

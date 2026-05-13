@@ -47,6 +47,7 @@ type RawEvent = {
   recurrenceRule: RawRecurrenceRule | null;
   reminderRules: { minutesBeforeStart: number; channel: string }[];
   overrides: RawOverride[];
+  participants: { userId: string; user: { name: string } }[];
 };
 
 export type CalendarEventData = {
@@ -75,6 +76,7 @@ export type CalendarEventData = {
     interval: number;
     until: string | null;
   } | null;
+  participants: { userId: string; name: string }[];
 };
 
 export function expandEvents(
@@ -102,6 +104,7 @@ export function expandEvents(
       confirmWithName: event.confirmWithUser?.name ?? null,
       counterProposalStart: event.counterProposalStart?.toISOString() ?? null,
       counterProposalEnd: event.counterProposalEnd?.toISOString() ?? null,
+      participants: event.participants.map((p) => ({ userId: p.userId, name: p.user.name })),
       isRecurring: !!event.recurrenceRule,
       occurrenceDate: null as string | null,
       reminderMinutes: pushReminder?.minutesBeforeStart ?? null,

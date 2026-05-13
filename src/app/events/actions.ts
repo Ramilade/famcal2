@@ -54,8 +54,9 @@ export async function createEventAction(formData: FormData) {
   const input = parseEventFormData(formData);
   const needsConfirmation = formData.get("needsConfirmation") === "on";
   const confirmWithUserId = (formData.get("confirmWithUserId") as string | null) || null;
+  const participantIds = formData.getAll("participantId").map(String).filter(Boolean);
 
-  await createEvent(prisma, { familyId: membership.familyId, createdByUserId: userId, input, needsConfirmation, confirmWithUserId });
+  await createEvent(prisma, { familyId: membership.familyId, createdByUserId: userId, input, needsConfirmation, confirmWithUserId, participantIds });
 
   notifyFamilyMembers(membership.familyId, { title: input.title, body: "Ny aftale tilføjet", url: "/" }, userId).catch(() => {});
   logActivity(membership.familyId, userId, "created", "event", "", input.title).catch(() => {});
@@ -95,6 +96,7 @@ export async function updateEventAction(formData: FormData) {
   const input = parseEventFormData(formData);
   const needsConfirmation = formData.get("needsConfirmation") === "on";
   const confirmWithUserId = (formData.get("confirmWithUserId") as string | null) || null;
+  const participantIds = formData.getAll("participantId").map(String).filter(Boolean);
 
   if (editScope === "this" && occurrenceDateStr) {
     const occurrenceDate = new Date(occurrenceDateStr);
@@ -157,6 +159,12 @@ export async function updateEventAction(formData: FormData) {
         responsibleUserId: input.responsibleUserId ?? null,
         needsConfirmation,
         confirmWithUserId,
+        participants: {
+          deleteMany: {},
+          ...(participantIds.length > 0
+            ? { create: participantIds.map((uid) => ({ userId: uid })) }
+            : {}),
+        },
         reminderRules: {
           deleteMany: {},
           ...(input.reminders.length > 0

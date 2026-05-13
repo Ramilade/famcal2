@@ -96,7 +96,7 @@ export default async function CalendarPage({
           { recurrenceRule: { isNot: null } },
         ],
       },
-      include: { responsibleUser: true, createdByUser: true, recurrenceRule: true, reminderRules: true, overrides: true, confirmWithUser: true },
+      include: { responsibleUser: true, createdByUser: true, recurrenceRule: true, reminderRules: true, overrides: true, confirmWithUser: true, participants: { include: { user: { select: { name: true } } } } },
       orderBy: { startsAt: "asc" },
     }),
     prisma.familyMember.findMany({
