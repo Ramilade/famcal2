@@ -15,13 +15,26 @@ services:
       timeout: 5s
       retries: 5
 
+  migrate:
+    build: .
+    command: npx prisma migrate deploy
+    env_file: .env
+    environment:
+      DATABASE_URL: "postgresql://famcal:famcal@db:5432/famcal?sslmode=disable"
+    depends_on:
+      db:
+        condition: service_healthy
+
   app:
     build: .
     command: npm run start
     env_file: .env
+    environment:
+      DATABASE_URL: "postgresql://famcal:famcal@db:5432/famcal?sslmode=disable"
+      APP_URL: "http://localhost:3000"
     depends_on:
-      db:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     ports:
       - "3000:3000"
 
@@ -29,9 +42,11 @@ services:
     build: .
     command: npm run worker:reminders
     env_file: .env
+    environment:
+      DATABASE_URL: "postgresql://famcal:famcal@db:5432/famcal?sslmode=disable"
     depends_on:
-      db:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
 volumes:
   postgres-data:

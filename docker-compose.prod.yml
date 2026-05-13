@@ -1,0 +1,41 @@
+services:
+  migrate:
+    build: .
+    command: npx prisma migrate deploy
+    env_file: .env.production
+    restart: "no"
+
+  app:
+    build: .
+    restart: always
+    env_file: .env.production
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    build: .
+    command: npm run worker:reminders
+    restart: always
+    env_file: .env.production
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+
+volumes:
+  caddy-data:
+  caddy-config:

@@ -18,7 +18,10 @@ async function main() {
     },
   });
 
-  const family = await prisma.family.create({ data: { name: familyName } });
+  const existingMembership = await prisma.familyMember.findFirst({ where: { userId: user.id } });
+  const family = existingMembership
+    ? await prisma.family.findUniqueOrThrow({ where: { id: existingMembership.familyId } })
+    : await prisma.family.create({ data: { name: familyName } });
 
   await prisma.familyMember.upsert({
     where: { familyId_userId: { familyId: family.id, userId: user.id } },

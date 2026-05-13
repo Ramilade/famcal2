@@ -15,6 +15,7 @@ enum RecurrenceFrequency {
   daily
   weekly
   monthly
+  yearly
 }
 
 enum ReminderChannel {
@@ -23,26 +24,70 @@ enum ReminderChannel {
 }
 
 model User {
-  id                String             @id @default(cuid())
-  email             String             @unique
+  id                String                @id @default(cuid())
+  email             String                @unique
   name              String
   passwordHash      String
-  defaultColor      String             @default("#2563eb")
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  defaultColor      String                @default("#2563eb")
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
   memberships       FamilyMember[]
-  createdEvents     Event[]            @relation("CreatedEvents")
-  responsibleEvents Event[]            @relation("ResponsibleEvents")
+  createdEvents     Event[]               @relation("CreatedEvents")
+  responsibleEvents Event[]               @relation("ResponsibleEvents")
   pushSubscriptions PushSubscription[]
+  dailyDigests      DailyDigestDelivery[]
+  activityLogs      ActivityLog[]
+  confirmWithEvents Event[]               @relation("ConfirmWithEvents")
+}
+
+model DailyDigestDelivery {
+  id     String   @id @default(cuid())
+  userId String
+  date   String
+  sentAt DateTime @default(now())
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  familyId   String
+  userId     String
+  action     String
+  entityType String
+  entityId   String?
+  entityName String?
+  createdAt  DateTime @default(now())
+  family     Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([familyId, createdAt(sort: Desc)])
 }
 
 model Family {
-  id        String         @id @default(cuid())
-  name      String
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  members   FamilyMember[]
-  events    Event[]
+  id            String         @id @default(cuid())
+  name          String
+  calendarToken String         @unique @default(cuid())
+  backgroundUrl String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  members       FamilyMember[]
+  events        Event[]
+  inviteTokens  InviteToken[]
+  activityLogs  ActivityLog[]
+}
+
+model InviteToken {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  familyId  String
+  createdBy String
+  expiresAt DateTime
+  usedAt    DateTime?
+  family    Family    @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@index([token])
 }
 
 model FamilyMember {
@@ -65,6 +110,7 @@ model Event {
   startsAt          DateTime
   endsAt            DateTime
   allDay            Boolean                @default(false)
+  isBirthday        Boolean                @default(false)
   color             String                 @default("#2563eb")
   responsibleUserId String?
   createdByUserId   String
@@ -73,11 +119,48 @@ model Event {
   family            Family                 @relation(fields: [familyId], references: [id], onDelete: Cascade)
   responsibleUser   User?                  @relation("ResponsibleEvents", fields: [responsibleUserId], references: [id], onDelete: SetNull)
   createdByUser     User                   @relation("CreatedEvents", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  needsConfirmation    Boolean                @default(false)
+  confirmWithUserId    String?
+  confirmWithUser      User?                  @relation("ConfirmWithEvents", fields: [confirmWithUserId], references: [id], onDelete: SetNull)
+  counterProposalStart DateTime?
+  counterProposalEnd   DateTime?
   recurrenceRule    RecurrenceRule?
   reminderRules     ReminderRule[]
   deliveries        NotificationDelivery[]
+  overrides         EventOverride[]
+  checklistItems    ChecklistItem[]
 
   @@index([familyId, startsAt])
+}
+
+model ChecklistItem {
+  id        String   @id @default(cuid())
+  eventId   String
+  text      String
+  checked   Boolean  @default(false)
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}
+
+model EventOverride {
+  id                String    @id @default(cuid())
+  eventId           String
+  occurrenceDate    DateTime
+  title             String?
+  description       String?
+  startsAt          DateTime?
+  endsAt            DateTime?
+  allDay            Boolean?
+  color             String?
+  responsibleUserId String?
+  isCancelled       Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  event             Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, occurrenceDate])
 }
 
 model RecurrenceRule {
